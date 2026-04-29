@@ -7,7 +7,9 @@ import { initialize, infoUpdate } from '/guessSolver.js';
 const gameBoard = document.getElementById('gameBoard');
 const guessInput = document.getElementById('guessInput');
 const guessButton = document.getElementById('guessButton');
-const refresh = document.getElementById('refresh');
+const refreshButton = document.getElementById('refresh');
+
+
 const inputs = [];
 const results = [];
 
@@ -43,11 +45,10 @@ function initializeGame() {
         console.log(solutionWord);
 
         guessButton.disabled = false;
-    });
-    
+    });   
 }
 
-function validate(word) {
+async function validate(word) {
 
     const resultRow = [];
 
@@ -60,24 +61,24 @@ function validate(word) {
             resultRow.push("+");
         }
         else if (solutionWordArr.includes(wordArr[i])){
-            resultRow.push("-");
+            resultRow.push("x");
         }
         else {
             resultRow.push(".");
         }
     }
-
-    // win con
-    if(word === solutionWord){
-
-        console.log("you win");
-    }
-
+    // these are before becasue if not then the await set timeout thing will delay the display
     results.push(resultRow);
     inputs.push(wordArr);
 
     refreshGame();
 
+    // win con
+    if(word === solutionWord){
+        await new Promise(r => setTimeout(r, 2000));
+        console.log('you win!');
+        refresh();
+    }
 }
 
 function refreshGame() {
@@ -129,7 +130,11 @@ guessInput.addEventListener("keydown", function(event) {
 });
 
 
-refresh.addEventListener('click', function() {
+refreshButton.addEventListener('click', function() {
+    refresh();
+});
+
+function refresh (){
     inputs.length = 0;
     results.length = 0;
     solutionWord = '';
@@ -163,7 +168,6 @@ refresh.addEventListener('click', function() {
         guessButton.disabled = false;
     });
     refreshGame();
-});
-
+}
 
 initializeGame();
